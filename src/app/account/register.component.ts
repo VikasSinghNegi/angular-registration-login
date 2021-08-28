@@ -7,58 +7,64 @@ import { AccountService, AlertService } from '../_services';
 
 @Component({ templateUrl: 'register.component.html' })
 export class RegisterComponent implements OnInit {
-    form: FormGroup;
-    loading = false;
-    submitted = false;
+  form: FormGroup;
+  loading = false;
+  submitted = false;
+  countryList: any = ['Australia', 'Brazil', 'Canada', 'India', 'USA'];
 
-    constructor(
-        private formBuilder: FormBuilder,
-        private route: ActivatedRoute,
-        private router: Router,
-        private accountService: AccountService,
-        private alertService: AlertService
-    ) {
-        // redirect to home if already logged in
-        if (this.accountService.userValue) {
-            this.router.navigate(['/']);
+  constructor(
+    private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private accountService: AccountService,
+    private alertService: AlertService
+  ) {
+    // redirect to home if already logged in
+    if (this.accountService.userValue) {
+      this.router.navigate(['/']);
+    }
+  }
+
+  ngOnInit() {
+    this.form = this.formBuilder.group({
+      firstName: ['', [Validators.required, Validators.minLength(6)]],
+      lastName: ['', [Validators.required, Validators.minLength(6)]],
+      phone: ['', Validators.required],
+      country: ['', Validators.required]
+    });
+  }
+
+  // convenience getter for easy access to form fields
+  get f() {
+    return this.form.controls;
+  }
+
+  onSubmit() {
+    this.submitted = true;
+
+    // reset alerts on submit
+    this.alertService.clear();
+
+    // stop here if form is invalid
+    if (this.form.invalid) {
+      return;
+    }
+
+    this.loading = true;
+    this.accountService
+      .register(this.form.value)
+      .pipe(first())
+      .subscribe(
+        data => {
+          this.alertService.success('Registration successful', {
+            keepAfterRouteChange: true
+          });
+          this.router.navigate(['../login'], { relativeTo: this.route });
+        },
+        error => {
+          this.alertService.error(error);
+          this.loading = false;
         }
-    }
-
-    ngOnInit() {
-        this.form = this.formBuilder.group({
-            firstName: ['', Validators.required],
-            lastName: ['', Validators.required],
-            phone: ['', Validators.required],
-            username: ['', Validators.required],
-            password: ['', [Validators.required, Validators.minLength(6)]]
-        });
-    }
-
-    // convenience getter for easy access to form fields
-    get f() { return this.form.controls; }
-
-    onSubmit() {
-        this.submitted = true;
-
-        // reset alerts on submit
-        this.alertService.clear();
-
-        // stop here if form is invalid
-        if (this.form.invalid) {
-            return;
-        }
-
-        this.loading = true;
-        this.accountService.register(this.form.value)
-            .pipe(first())
-            .subscribe(
-                data => {
-                    this.alertService.success('Registration successful', { keepAfterRouteChange: true });
-                    this.router.navigate(['../login'], { relativeTo: this.route });
-                },
-                error => {
-                    this.alertService.error(error);
-                    this.loading = false;
-                });
-    }
+      );
+  }
 }
