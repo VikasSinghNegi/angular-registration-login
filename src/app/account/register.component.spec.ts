@@ -4,10 +4,9 @@ import { CommonModule } from '@angular/common';
 import { RegisterComponent } from './register.component';
 import { AppModule } from '../app.module';
 
-describe('StaticComponent', () => {
+describe('Register Component', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
-
   const formBuilder: FormBuilder = new FormBuilder();
 
   beforeEach(async(() => {
@@ -21,7 +20,6 @@ describe('StaticComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
-
     component.form = formBuilder.group({
       firstName: '',
       lastName: '',
@@ -136,6 +134,18 @@ describe('StaticComponent', () => {
       phone: '9542365897',
       country: 'India'
     });
+    expect(component.form.invalid).toBeFalsy();
+  });
+
+  it('should call onSubmit', () => {
+    component.form.patchValue({
+      firstName: 'firstName',
+      lastName: 'lastname',
+      phone: '9542365897',
+      country: 'India'
+    });
+    component.onSubmit();
+    fixture.detectChanges();
     expect(component.form.invalid).toBeFalsy();
   });
 });
