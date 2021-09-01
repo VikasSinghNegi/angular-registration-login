@@ -2,3 +2,7 @@ Click below StackBlitz link to open the code online and there is no need to down
 
 [Edit on StackBlitz ⚡️]
 (https://stackblitz.com/edit/angular-registration-login-vikas)
+
+Note:
+"main": "src/main-testing.ts" [Line No 18]  - For Running Test Case
+"main": "src/main.ts"  [Line No 18]  - For Running Code
